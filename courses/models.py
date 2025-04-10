@@ -14,7 +14,7 @@ class Course(models.Model):
     students = models.IntegerField()
     amount_students = models.IntegerField()
     author = models.ForeignKey(
-        "accounts.Account", on_delete=models.CASCADE, related_name="courses"
+        "accounts.User", on_delete=models.CASCADE, related_name="courses"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

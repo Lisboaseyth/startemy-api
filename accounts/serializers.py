@@ -1,12 +1,33 @@
 from rest_framework import serializers
-from accounts.models import GenderAccount
+from django.contrib.auth import get_user_model
 
-class AccountSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=150)
-    email = serializers.EmailField()
-    password = serializers.CharField()
-    document = serializers.CharField(max_length=15)
-    phone = serializers.CharField(max_length=15)
-    birthdate = serializers.DateField()
-    study_level = serializers.CharField(max_length=50)
-    gender = serializers.ChoiceField(choices=GenderAccount.choices)
+User = get_user_model()
+
+
+class AccountSerializer(serializers.ModelField):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "document",
+            "phone",
+            "birthdate",
+            "study_level",
+            "gender",
+            "created_at",
+            "updated_at",
+            "password",
+        ]
+        extra_kwargs = {
+            "password": {"write_only": True},
+        }
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user

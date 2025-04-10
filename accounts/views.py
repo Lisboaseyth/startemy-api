@@ -1,9 +1,8 @@
 from rest_framework.views import APIView, status
 from rest_framework.response import Response
 from django.forms.models import model_to_dict
-from accounts.models import Account
+from accounts.models import User
 from accounts.serializers import AccountSerializer
-import pdb
 
 
 # Create your views here.
@@ -12,11 +11,11 @@ class AccountRegisterView(APIView):
         serializer = AccountSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        account = Account.objects.create(**serializer.validated_data)
+        account = User.objects.create(**serializer.validated_data)
         return Response(model_to_dict(account), status.HTTP_201_CREATED)
 
     def get(self, request):
-        accounts = Account.objects.all()
+        accounts = User.objects.all()
         accounts_list = []
 
         for account in accounts:
