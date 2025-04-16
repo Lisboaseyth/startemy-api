@@ -16,14 +16,9 @@ class User(AbstractUser):
     gender = models.CharField(
         max_length=20, choices=GenderAccount.choices, default=GenderAccount.NOT_INFORMED
     )
-
     email = models.EmailField(unique=True)
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name"]
-
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    birthdate = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.username

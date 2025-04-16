@@ -11,8 +11,9 @@ class AccountRegisterView(APIView):
         serializer = AccountSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        account = User.objects.create(**serializer.validated_data)
-        return Response(model_to_dict(account), status.HTTP_201_CREATED)
+        user = serializer.save()
+
+        return Response(AccountSerializer(user).data, status=status.HTTP_201_CREATED)
 
     def get(self, request):
         accounts = User.objects.all()
