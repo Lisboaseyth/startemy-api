@@ -37,7 +37,7 @@ class AccountSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         password = validated_data.pop("password")
-        validated_data["username"] = validated_data["email"]
+        validated_data["username"] = validated_data["username"]
 
         user = User(**validated_data)
         user.set_password(password)

@@ -18,3 +18,25 @@ class Course(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class Module(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    course = models.ForeignKey(
+        "Course", on_delete=models.CASCADE, related_name="modules"
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Step(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    url_video = models.URLField()
+    url_image = models.URLField()
+    module = models.ForeignKey("Module", on_delete=models.CASCADE, related_name="steps")
+
+    def __str__(self):
+        return self.title
