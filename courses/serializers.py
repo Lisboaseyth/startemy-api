@@ -7,7 +7,17 @@ from courses.models import Course, Module, Step
 class StepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Step
-        fields = ["id", "title", "description", "url_video", "url_image"]
+        fields = [
+            "id",
+            "title",
+            "description",
+            "url_video",
+            "url_image",
+            "module_id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
 
 
 class ModuleSerializer(serializers.ModelSerializer):
@@ -51,3 +61,9 @@ class CourseSerializer(serializers.ModelSerializer):
                 Step.objects.create(module=module, **step_data)
 
         return course
+
+
+class ModuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Module
+        fields = ["id", "name", "description"]
