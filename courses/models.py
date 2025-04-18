@@ -36,7 +36,9 @@ class Step(models.Model):
     description = models.TextField()
     url_video = models.URLField()
     url_image = models.URLField()
-    module = models.ForeignKey("Module", on_delete=models.CASCADE, related_name="steps")
+    module = models.ForeignKey(
+        "courses.Module", on_delete=models.CASCADE, related_name="steps"
+    )
 
-    def __str__(self):
-        return self.title
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
