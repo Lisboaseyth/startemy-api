@@ -10,7 +10,7 @@ Bem-vindo à **Startemy API** – uma plataforma educacional desenvolvida com Dj
 - Django 4+
 - Django REST Framework
 - JWT com SimpleJWT
-- SQLite (ou outro banco relacional)
+- SQLite
 - Virtualenv
 
 ---
