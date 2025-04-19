@@ -1,7 +1,5 @@
 from rest_framework.views import APIView, status
 from rest_framework.response import Response
-from django.forms.models import model_to_dict
-from accounts.models import User
 from accounts.serializers import AccountSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -19,17 +17,14 @@ class AccountRegisterView(APIView):
 
         return Response(AccountSerializer(user).data, status=status.HTTP_201_CREATED)
 
+
+class AccountProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        self.permission_classes = [IsAuthenticated]
-        self.check_permissions(request)
-
-        accounts = User.objects.all()
-        serializer = AccountSerializer(accounts, many=True)
-
-        return Response(
-            {"data": serializer.data, "message": "List of authors listed successfully"},
-            status=status.HTTP_200_OK,
-        )
+        user = request.user
+        serializer = AccountSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -48,10 +43,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             "username": self.user.username,
             "email": self.user.email,
         }
-        return {
-            "data": data,
-            "message": "Usuário logado com sucesso!"
-        }
+        return {"data": data, "message": "Usuário logado com sucesso!"}
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
