@@ -18,10 +18,6 @@ urlpatterns = [
     ),
     path(
         "courses/<int:course_id>/modules/<int:module_id>/steps/",
-        StepCreateView.as_view(),
-    ),
-    path(
-        "courses/<int:course_id>/modules/<int:module_id>/steps/",
         StepListCreateView.as_view(),
     ),
     path(

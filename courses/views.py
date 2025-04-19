@@ -19,7 +19,10 @@ class CourseView(APIView, PageNumberPagination):
 
         course = Course.objects.create(author=request.user, **serializer.validated_data)
         serializer = CourseSerializer(course)
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        return Response(
+            {"data": serializer.data, "message": "Course created sucessfully"},
+            status.HTTP_201_CREATED,
+        )
 
     def get(self, request):
         type_param = request.query_params.get("type")
@@ -61,7 +64,10 @@ class CourseDetailView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"data": serializer.data, "message": "Course updated sucessfully"},
+            status=status.HTTP_200_OK,
+        )
 
     def delete(self, request, course_id):
         course = get_object_or_404(Course, id=course_id)
@@ -75,20 +81,34 @@ class CourseDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CourseModuleView(CreateAPIView):
-    serializer_class = ModuleSerializer
-    permission_classes = [IsAuthenticated]
+class CourseModuleView(APIView, PageNumberPagination):
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def perform_create(self, serializer):
-        course_id = self.kwargs.get("course_id")
+    def get(self, request, course_id):
+        course = get_object_or_404(Course, id=course_id)
+        modules = Module.objects.filter(course=course)
+        results = self.paginate_queryset(modules, request, view=self)
+        serializer = ModuleSerializer(results, many=True)
+        return self.get_paginated_response(
+            {"data": serializer.data, "message": "Modules retrieved successfully"}
+        )
+
+    def post(self, request, course_id):
         course = get_object_or_404(Course, id=course_id)
 
-        if course.author != self.request.user:
+        if course.author != request.user:
             raise PermissionDenied(
                 "Você não tem permissão para adicionar módulos a este curso."
             )
 
+        serializer = ModuleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         serializer.save(course=course)
+
+        return Response(
+            {"data": serializer.data, "message": "Module created successfully"},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class ModuleDetailView(APIView):
@@ -120,26 +140,6 @@ class ModuleDetailView(APIView):
 
         module.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class StepCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, course_id, module_id):
-        course = get_object_or_404(Course, id=course_id)
-        module = get_object_or_404(Module, id=module_id, course=course)
-
-        if course.author != request.user:
-            return Response(
-                {"detail": "Você não tem permissão para adicionar steps neste módulo."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        serializer = StepSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(module=module)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class StepListCreateView(APIView, PageNumberPagination):
