@@ -14,7 +14,31 @@ class Course(models.Model):
     students = models.IntegerField()
     amount_students = models.IntegerField()
     author = models.ForeignKey(
-        "accounts.Account", on_delete=models.CASCADE, related_name="courses"
+        "accounts.User", on_delete=models.CASCADE, related_name="courses"
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Module(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    course = models.ForeignKey(
+        "Course", on_delete=models.CASCADE, related_name="modules"
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Step(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    url_video = models.URLField()
+    url_image = models.URLField()
+    module = models.ForeignKey(
+        "courses.Module", on_delete=models.CASCADE, related_name="steps"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
