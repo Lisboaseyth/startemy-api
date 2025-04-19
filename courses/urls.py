@@ -4,7 +4,6 @@ from courses.views import (
     CourseModuleView,
     CourseDetailView,
     ModuleDetailView,
-    StepCreateView,
     StepDetailView,
     StepListCreateView,
 )

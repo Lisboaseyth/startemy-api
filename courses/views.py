@@ -6,7 +6,6 @@ from courses.serializers import CourseSerializer, ModuleSerializer, StepSerializ
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.generics import CreateAPIView
 
 
 # Create your views here.
