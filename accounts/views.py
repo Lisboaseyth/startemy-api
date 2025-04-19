@@ -1,7 +1,5 @@
 from rest_framework.views import APIView, status
 from rest_framework.response import Response
-from django.forms.models import model_to_dict
-from accounts.models import User
 from accounts.serializers import AccountSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
