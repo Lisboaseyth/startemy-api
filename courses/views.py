@@ -142,29 +142,6 @@ class ModuleDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# class StepCreateView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request, course_id, module_id):
-#         course = get_object_or_404(Course, id=course_id)
-#         module = get_object_or_404(Module, id=module_id, course=course)
-
-#         if course.author != request.user:
-#             return Response(
-#                 {"detail": "Você não tem permissão para adicionar steps neste módulo."},
-#                 status=status.HTTP_403_FORBIDDEN,
-#             )
-
-#         serializer = StepSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save(module=module)
-
-#         return Response(
-#             {"data": serializer.data, "message": "Step created successfully"},
-#             status=status.HTTP_201_CREATED,
-#         )
-
-
 class StepListCreateView(APIView, PageNumberPagination):
     permission_classes = [IsAuthenticated]
 
