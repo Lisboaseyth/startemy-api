@@ -4,7 +4,6 @@ from courses.views import (
     CourseModuleView,
     CourseDetailView,
     ModuleDetailView,
-    StepCreateView,
     StepDetailView,
     StepListCreateView,
 )
@@ -15,10 +14,6 @@ urlpatterns = [
     path("courses/<int:course_id>/modules/", CourseModuleView.as_view()),
     path(
         "courses/<int:course_id>/modules/<int:module_id>/", ModuleDetailView.as_view()
-    ),
-    path(
-        "courses/<int:course_id>/modules/<int:module_id>/steps/",
-        StepCreateView.as_view(),
     ),
     path(
         "courses/<int:course_id>/modules/<int:module_id>/steps/",
