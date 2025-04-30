@@ -1,6 +1,6 @@
 from rest_framework.views import APIView, status
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
+from .pagination import CustomPagination
 from courses.models import Course, Module, Step
 from courses.serializers import CourseSerializer, ModuleSerializer, StepSerializer
 from django.shortcuts import get_object_or_404
@@ -9,7 +9,7 @@ from rest_framework.exceptions import PermissionDenied
 
 
 # Create your views here.
-class CourseView(APIView, PageNumberPagination):
+class CourseView(APIView, CustomPagination):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request):
@@ -30,7 +30,11 @@ class CourseView(APIView, PageNumberPagination):
         if id_param:
             course = get_object_or_404(Course, id=id_param)
             serializer = CourseSerializer(course)
-            return Response(serializer.data)
+            return Response(
+                {
+                    "results": serializer.data,
+                }
+            )
 
         if type_param:
             courses_list = Course.objects.filter(type__iexact=type_param)
@@ -40,12 +44,7 @@ class CourseView(APIView, PageNumberPagination):
         result_page = self.paginate_queryset(courses_list, request, view=self)
         serializer = CourseSerializer(result_page, many=True)
 
-        return self.get_paginated_response(
-            {
-                "data": serializer.data,
-                "message": "List of courses listed successfully",
-            }
-        )
+        return self.get_paginated_response(serializer.data)
 
 
 class CourseDetailView(APIView):
@@ -80,7 +79,7 @@ class CourseDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CourseModuleView(APIView, PageNumberPagination):
+class CourseModuleView(APIView, CustomPagination):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, course_id):
@@ -88,9 +87,7 @@ class CourseModuleView(APIView, PageNumberPagination):
         modules = Module.objects.filter(course=course)
         results = self.paginate_queryset(modules, request, view=self)
         serializer = ModuleSerializer(results, many=True)
-        return self.get_paginated_response(
-            {"data": serializer.data, "message": "Modules retrieved successfully"}
-        )
+        return self.get_paginated_response(serializer.data)
 
     def post(self, request, course_id):
         course = get_object_or_404(Course, id=course_id)
@@ -141,7 +138,7 @@ class ModuleDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class StepListCreateView(APIView, PageNumberPagination):
+class StepListCreateView(APIView, CustomPagination):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, course_id, module_id):
